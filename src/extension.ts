@@ -133,6 +133,9 @@ export async function activate(context: vscode.ExtensionContext) {
         if(e.affectsConfiguration("slither.solcPath")) {
             config.readConfiguration();
         }
+        if(e.affectsConfiguration("slither.scanningDirectories")) {
+            config.readConfiguration();
+        }
     });
 
     // If we are in debug mode, log our activation message and focus on the output channel

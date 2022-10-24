@@ -12,6 +12,11 @@ export class Logger {
         this.outputChannel.show();
     }
 
+    public static clear() : void {
+        // Clear this channel
+        this.outputChannel.clear();
+    }
+
     public static log(msg : string): void {
         // Output the base message.
         this.outputChannel.appendLine(msg);

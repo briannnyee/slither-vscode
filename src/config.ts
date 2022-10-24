@@ -15,10 +15,12 @@ export const storageFiles = {
 export interface UserConfiguration {
     solcPath : string;
     hiddenDetectors : string[];
+    scanningDirectories: string;
 }
 const defaultConfiguration : UserConfiguration = {
     solcPath: "", // default solc path (if blank, no custom path)
-    hiddenDetectors: [] // "check" properties to ignore in analysis results
+    hiddenDetectors: [], // "check" properties to ignore in analysis results
+    scanningDirectories: "contracts-only" // default scanning directories
 }
 export let userConfiguration : UserConfiguration = Object.assign({}, defaultConfiguration);
 

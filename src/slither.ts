@@ -74,6 +74,7 @@ export async function analyze(print : boolean = true) : Promise<boolean> {
     }
 
     // Print our starting analysis message.
+    Logger.info(`\u2E3B ${vscode.workspace.workspaceFolders.length} workspace folders detected! \u2E3B`);
     Logger.log("\u2E3B Starting analysis \u2E3B");
 
     // If we have not initialized slither, try to do so now.
@@ -89,10 +90,37 @@ export async function analyze(print : boolean = true) : Promise<boolean> {
     // Loop for every workspace to run analysis on.
     let successCount = 0;
     let failCount = 0;
+    const contractsRegExpLeftSlash = /\/contracts$/g;
+    const contractsRegExpRightSlash = /\\contracts$/g;
+    config.readConfiguration()
+    const scanningDirectoriesConfig = config.userConfiguration.scanningDirectories;
+    Logger.log(`You are in "${scanningDirectoriesConfig}" mode!`)
     for (let i = 0; i < vscode.workspace.workspaceFolders.length; i++) {
 
         // Obtain our workspace path.
-        const workspaceFolder = vscode.workspace.workspaceFolders[i].uri.fsPath;
+        let workspaceFolder = vscode.workspace.workspaceFolders[i].uri.fsPath;
+        if (scanningDirectoriesConfig === "contracts-only") {
+            if (process.platform === "win32") {
+                if(!contractsRegExpRightSlash.test(workspaceFolder)) {
+                    workspaceFolder += "\\contracts";
+                }
+            } else if (process.platform === "darwin" || process.platform === "linux") {
+                if(!contractsRegExpLeftSlash.test(workspaceFolder)) {
+                    workspaceFolder += "/contracts";
+                }
+            } else {
+                Logger.error('Unsupported OS platform');
+                break;
+            }
+        } else if (scanningDirectoriesConfig === "all") {
+            // do nothing
+        } else {
+            Logger.info("Please enter valid scanning directories ('all' or 'contracts-only').");
+            Logger.error("Invalid scanning directories configuration ('all' or 'contracts-only')");
+            break;
+        }
+
+        Logger.log(workspaceFolder)
 
         // Create the storage directory if it does not exist.
         config.createStorageDirectory(workspaceFolder);
